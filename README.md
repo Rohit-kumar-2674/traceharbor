@@ -1,6 +1,6 @@
 # traceharbor
 
-<p align="center"><img src="traceharbor/web/mark.svg" width="72" alt="TraceHarbor logo"></p>
+<p align="center"><img width="67" height="67" src="https://img.icons8.com/external-smashingstocks-thin-outline-color-smashing-stocks/67/external-Cyber-Eye-hacking-and-technology-smashingstocks-thin-outline-color-smashing-stocks.png" alt="external-Cyber-Eye-hacking-and-technology-smashingstocks-thin-outline-color-smashing-stocks"/></p>
 <h2 align="center">TraceHarbor · Evidence before inference.</h2>
 <p align="center">A local-first investigation workspace for public-source research,<br>careful evidence review, and accountable findings.</p>
 
