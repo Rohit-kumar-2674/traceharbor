@@ -1,0 +1,8 @@
+{
+  "name": "traceharbor-browser-tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Optional browser smoke tests; Node is not needed to run TraceHarbor",
+  "scripts": {"test:e2e": "node scripts/browser_smoke.cjs"},
+  "devDependencies": {"playwright": "1.62.1"}
+}

@@ -283,6 +283,7 @@ of a stable public service yet.
 | `POST` | `/api/inspect-url` | Parse a public URL without fetching it |
 | `POST` | `/api/public-leads` | Prepare unverified public profile candidates |
 | `POST` | `/api/compare` | Compare two same-case file records |
+| `GET` | `/api/schema` | Read the authenticated OpenAPI schema |
 
 Protected endpoints require:
 
@@ -295,15 +296,19 @@ File JSON uses a base64 value in `data_base64`. The browser handles this convers
 do not put a file path in API JSON and expect the server to read it. The server never
 accepts a path supplied by a client.
 
-Example analysis request:
+Example body for `POST /api/analyze`. This complete base64 value represents a
+synthetic text file containing `TraceHarbor training evidence.` and a newline:
 
 ```json
 {
-  "filename": "training-note.png",
-  "data_base64": "iVBORw0KGgoAAAANSUhEUg...",
-  "ocr": true
+  "filename": "training-note.txt",
+  "data_base64": "VHJhY2VIYXJib3IgdHJhaW5pbmcgZXZpZGVuY2UuCg==",
+  "ocr": false
 }
 ```
+
+For image OCR, supply the complete base64-encoded image, its filename, and
+`"ocr": true`. Tesseract and the image dependencies must be installed.
 
 The API deliberately does not expose arbitrary SQL, filesystem paths, shell commands,
 remote URL fetching, account searches, face matching or private-data connectors.

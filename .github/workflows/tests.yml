@@ -1,0 +1,32 @@
+name: Core checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install local OCR
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
+      - name: Install tested runtime and development tools
+        run: |
+          python -m pip install -r requirements.lock
+          python -m pip install -e '.[dev]'
+      - name: Lint and format
+        run: |
+          ruff check traceharbor tests
+          ruff format --check traceharbor tests
+      - name: Test core and API
+        run: python -m pytest -q
+      - name: Check browser JavaScript syntax
+        run: node --check traceharbor/web/app.js
