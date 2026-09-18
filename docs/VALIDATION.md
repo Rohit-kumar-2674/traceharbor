@@ -34,3 +34,13 @@ audit, performance guarantee or forensic validation.
 The repository's GitHub Actions workflow can run repeatable core checks after upload.
 Do not treat configuration of a workflow as evidence it has passed; inspect its actual
 run result. Browser tests require their separate development setup.
+
+## September 2026 maintenance checks
+
+- 52 passing tests on Linux / Python 3.12, including 10 new portable export checks.
+- The new cases cover modified bytes, unexpected paths, missing or duplicate members,
+  expanded-size limits, corrupt archives, and CLI operation without creating a vault.
+- `verify-export` only verifies archive checksums; it does not validate the sender,
+  record semantics, or the exported case audit chain.
+- Python lint and format checks were rerun. Browser validation remains a separate gap
+  from the initial release; this change does not claim it passed.

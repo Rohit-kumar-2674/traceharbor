@@ -1,6 +1,6 @@
 # traceharbor
 
-<p align="center"><img width="67" height="67" src="https://img.icons8.com/external-smashingstocks-thin-outline-color-smashing-stocks/67/external-Cyber-Eye-hacking-and-technology-smashingstocks-thin-outline-color-smashing-stocks.png" alt="external-Cyber-Eye-hacking-and-technology-smashingstocks-thin-outline-color-smashing-stocks"/></p>
+<p align="center"><img width="67" height="67" src="traceharbor/web/mark.svg" alt="TraceHarbor logo"/></p>
 <h2 align="center">TraceHarbor · Evidence before inference.</h2>
 <p align="center">A local-first investigation workspace for public-source research,<br>careful evidence review, and accountable findings.</p>
 
@@ -29,6 +29,7 @@ It also works from a terminal. It is the renamed successor to the TraceForge con
 | Findings & timeline | Analyst-written assessments with same-case evidence references and UTC event times |
 | File comparison | Exact-byte hash comparison and image dHash distance; never facial recognition |
 | Local integrity checks | Compare stored record hashes, originals and a hash-linked activity log |
+| Export verification | Check a received ZIP against its included checksum manifest without extracting it or opening a case vault |
 | Portable reports | ZIP containing printable HTML, structured JSON, audit entries and SHA-256 manifest; originals are opt-in |
 | Terminal commands | Analyse files, inspect URLs, create/list cases, add files, verify and export |
 
@@ -108,11 +109,16 @@ python -m traceharbor cases
 python -m traceharbor add-file CASE_ID photo.jpg --notes 'Authorised training image' --ocr
 python -m traceharbor verify CASE_ID
 python -m traceharbor export CASE_ID --output report.zip
+python -m traceharbor verify-export report.zip
 ```
 
 Replace `CASE_ID` with the ID returned by `create-case` or `cases`. Add
 `--include-originals` to export original files deliberately. The CLI refuses to
-overwrite an existing export. `verify` returns exit code `2` when checks fail.
+overwrite an existing export. `verify` and `verify-export` return exit code `2` when checks fail.
+
+`verify-export` checks portable ZIP checksums without extracting files or opening a
+vault. It does not authenticate the sender or validate the internal case audit chain;
+a party who rewrites both files and manifest can pass it. See [export verification](docs/EXPORTS.md).
 
 To use a separate workspace, put the global data option before the command:
 
@@ -155,6 +161,7 @@ and [security reporting policy](SECURITY.md) before evaluation.
 | HTTP API | `traceharbor/server.py` | FastAPI routes, request limits, same-origin and token checks |
 | Evidence analysis | `traceharbor/analysis.py` | Original-byte hashing, optional Pillow/Tesseract, offline link helpers |
 | Case store | `traceharbor/store.py` | SQLite records, content-addressed originals, hash-linked audit entries |
+| Export verifier | `traceharbor/verification.py` | Bounded ZIP checksum verification without extraction |
 | Reports | `traceharbor/reports.py` | Escaped HTML, JSON, ZIP and export checksum manifest |
 | Terminal | `traceharbor/cli.py` | Local analysis and case commands |
 
@@ -392,8 +399,9 @@ Set `TRACEHARBOR_PYTHON` if your Python executable is not `python3`. The browser
 checks case creation, training data, finding escaping, file upload, audit checks,
 URL/lead helpers, exports, archive/reopen, search, reload persistence and mobile navigation.
 
-**Build verification:** 42 core/API tests passed, including real local OCR; lint and
-syntax checks passed. Live browser testing was blocked by the authoring environment's
+**Initial build verification:** 42 core/API tests passed, including real local OCR; lint and
+syntax checks passed. The September 2026 maintenance pass adds 10 export-verification
+regression cases (52 total passing tests). Live browser testing was blocked by the authoring environment's
 local-host access restriction; the browser script is included but has not been run
 successfully here. See [validation notes](docs/VALIDATION.md). Test results are not a
 security audit or forensic certification.
