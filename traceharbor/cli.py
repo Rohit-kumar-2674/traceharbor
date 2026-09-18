@@ -11,13 +11,14 @@ from . import __version__
 from .analysis import MAX_FILE_BYTES, analyze_bytes, capabilities, inspect_url
 from .reports import export_case
 from .store import Store
+from .verification import verify_export
 
 
 def default_directory():
     return os.environ.get("TRACEHARBOR_DATA_DIR", str(Path.home() / ".local" / "share" / "traceharbor"))
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description="TraceHarbor — evidence before inference.")
     parser.add_argument("--version", action="version", version=__version__)
     parser.add_argument(
@@ -49,7 +50,11 @@ def main():
     export.add_argument("case_id")
     export.add_argument("--output", required=True, type=Path)
     export.add_argument("--include-originals", action="store_true")
-    args = parser.parse_args()
+    verify_archive = commands.add_parser(
+        "verify-export", help="Check export ZIP checksums without extraction"
+    )
+    verify_archive.add_argument("archive", type=Path)
+    args = parser.parse_args(argv)
 
     def load_file():
         if args.file.stat().st_size > MAX_FILE_BYTES:
@@ -94,6 +99,10 @@ def main():
             result = analyze_bytes(load_file(), args.file.name, args.ocr)
         elif args.command == "inspect-url":
             result = inspect_url(args.url)
+        elif args.command == "verify-export":
+            result = verify_export(args.archive)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+            return 0 if result["valid"] else 2
         else:
             store = Store(args.data_dir)
             if args.command == "cases":
